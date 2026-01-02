@@ -415,8 +415,13 @@ console.log('📞 Phone: +91 44 2747 2005');
 // ADVERTISEMENT POPUP MODAL
 // ===================================
 
+// Ensure scrolling is enabled on page load (safety check)
+document.body.style.overflow = '';
+
 // Show advertisement popup after page load
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded - preparing to show ad popup');
+
     // Show popup after 2 seconds
     setTimeout(() => {
         showAdModal();
@@ -426,12 +431,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // Show advertisement modal
 function showAdModal() {
     const adModal = document.getElementById('adModal');
+    console.log('showAdModal called, adModal element:', adModal);
+
     if (adModal) {
         adModal.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
-        console.log('Advertisement popup shown');
+        console.log('Advertisement popup shown - overflow hidden');
     } else {
-        console.error('Ad modal element not found');
+        console.error('Ad modal element not found - check HTML');
     }
 }
 
@@ -441,6 +448,7 @@ function closeAdModal() {
     if (adModal) {
         adModal.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
+        console.log('Advertisement popup closed - overflow restored');
     }
 }
 
@@ -460,10 +468,30 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Update the existing Escape key handler to include ad modal
+// Close ad modal on Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeAdModal();
         closeModal();
+    }
+});
+
+// Safety: Ensure scrolling is restored if user navigates away
+window.addEventListener('beforeunload', () => {
+    document.body.style.overflow = '';
+});
+
+// Emergency scroll restore (press 'S' key if scrolling is stuck)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 's' || e.key === 'S') {
+        if (e.ctrlKey || e.metaKey) {
+            // Allow Ctrl+S / Cmd+S for save
+            return;
+        }
+        // Check if body overflow is hidden
+        if (document.body.style.overflow === 'hidden') {
+            document.body.style.overflow = '';
+            console.log('Emergency scroll restore activated!');
+        }
     }
 });
